@@ -1,0 +1,78 @@
+Table cidade {
+  id_cidade integer [pk, increment]
+  nome varchar(100) [not null]
+  estado varchar(50) [not null]
+}
+
+Table bairro {
+  id_bairro integer [pk, increment]
+  id_cidade integer [not null]
+  nome varchar(100) [not null]
+  // nota_media: atributo derivado (média das notas em avaliacao), não armazenado
+}
+
+Table imobiliaria {
+  id_imobiliaria integer [pk, increment]
+  id_matriz integer [null, note: 'Preenchido apenas nas filiais; a matriz fica NULL']
+  nome varchar(150) [not null]
+  cnpj varchar(14) [not null, unique]
+}
+
+Table imovel {
+  id_imovel integer [pk, increment]
+  id_bairro integer [not null]
+  id_imobiliaria integer [null, note: 'Anúncio pode não ter imobiliária']
+  tipo varchar(50) [not null]
+  finalidade varchar(50) [not null]
+  area_m2 decimal(10,2) [not null]
+  preco decimal(14,2) [not null]
+  status varchar(50) [not null]
+  // preco_por_m2: atributo derivado (preco / area_m2), não armazenado
+}
+
+Table estabelecimento {
+  id_estabelecimento integer [pk, increment]
+  id_bairro integer [not null]
+  nome varchar(150) [not null]
+  categoria varchar(100) [not null]
+}
+
+Table usuario {
+  id_usuario integer [pk, increment]
+  nome varchar(150) [not null]
+  email varchar(150) [not null, unique]
+  data_nascimento date [not null]
+  tipo varchar(50) [not null]
+  // idade: atributo derivado (a partir de data_nascimento), não armazenado
+}
+
+// Relacionamento N:N entre USUARIO e BAIRRO, com atributos próprios
+Table avaliacao {
+  id_avaliacao integer [pk, increment]
+  id_usuario integer [not null]
+  id_bairro integer [not null]
+  data date [not null]
+  nota smallint [not null]
+  topico varchar(100) [not null]
+  situacao_moradia varchar(100) [not null]
+  motivo text [null, note: 'Opcional (O)']
+}
+
+// CIDADE (1) tem BAIRRO (N)
+Ref: bairro.id_cidade > cidade.id_cidade
+
+// BAIRRO (1) contém IMOVEL (N)
+Ref: imovel.id_bairro > bairro.id_bairro
+
+// BAIRRO (1) possui ESTABELECIMENTO (N)
+Ref: estabelecimento.id_bairro > bairro.id_bairro
+
+// IMOBILIARIA (0..1) anuncia IMOVEL (N)
+Ref: imovel.id_imobiliaria > imobiliaria.id_imobiliaria
+
+// Autorrelacionamento: IMOBILIARIA matriz (0..1) -> filiais (N)
+Ref: imobiliaria.id_matriz > imobiliaria.id_imobiliaria
+
+// USUARIO (N) avalia BAIRRO (N), via avaliacao
+Ref: avaliacao.id_usuario > usuario.id_usuario
+Ref: avaliacao.id_bairro > bairro.id_bairro
