@@ -63,7 +63,7 @@ CREATE TABLE avaliacao (
 	id_bairro		INTEGER NOT NULL, 
 	data			DATE NOT NULL,
 	nota			REAL NOT NULL CHECK (nota BETWEEN 0.5 AND 5.0),
-	topico 			TEXT NOT NULL CHECK (topico IN ('seguranca', 'infraestrutura', 'custo de vida', 'qualidade de vida',
+	topico 			TEXT NOT NULL CHECK (topico IN ('seguranca', 'infraestrutura', 'custo_de_vida', 'qualidade_de_vida',
 'comercio')),
 	situacao_moradia TEXT NOT NULL,
 	motivo			TEXT,
