@@ -39,27 +39,18 @@ CREATE TABLE estabelecimento (
 	nome				TEXT NOT NULL,	
 	categoria			TEXT NOT NULL CHECK (
 							categoria IN (
-							'alimentos e bebidas', 
-							'compras', 
-							'saúde', 
-							'educação', 
-							'lazer', 
-							'hospedagem', 
-							'automoveis', 
-							'financas', 
-							'serviços', 
-							'servicos publicos'
+							'farmacia', 'escola', 'mercado', 'transporte'
 							)),
 	FOREIGN KEY (id_bairro) REFERENCES bairro (id_bairro)
 );
 
 CREATE TABLE imovel (
-	id_movel 	INTEGER PRIMARY KEY,
+	id_imovel 	INTEGER PRIMARY KEY,
 	id_bairro	INTEGER NOT NULL,
-	id_mobiliaria	INTEGER, 
-	tipo		TEXT NOT NULL CHECK (tipo IN ('apartamento', 'casa', 'terreno')),
-	finalidade  TEXT NOT NULL CHECK (finalidade IN ('aluguel', 'compra')),
-	area_m2		REAL NOT NULL CHECK (preco > 0),
+	id_imobiliaria	INTEGER, 
+	tipo		TEXT NOT NULL CHECK (tipo IN ('apartamento', 'casa', 'terreno', 'kitnet')),
+	finalidade  TEXT NOT NULL CHECK (finalidade IN ('aluguel', 'venda')),
+	area_m2		REAL NOT NULL CHECK (area_m2 > 0),
 	preco		REAL NOT NULL CHECK (preco > 0),
 	status		TEXT NOT NULL DEFAULT 'pendente',
 	FOREIGN KEY (id_bairro) REFERENCES bairro (id_bairro),
