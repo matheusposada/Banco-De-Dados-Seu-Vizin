@@ -54,7 +54,7 @@ CREATE TABLE imovel (
 	preco		REAL NOT NULL CHECK (preco > 0),
 	status		TEXT NOT NULL DEFAULT 'pendente',
 	FOREIGN KEY (id_bairro) REFERENCES bairro (id_bairro),
-	FOREIGN KEY (id_mobiliaria) REFERENCES imobiliaria (id_imobiliaria)
+	FOREIGN KEY (id_imobiliaria) REFERENCES imobiliaria (id_imobiliaria)
 );
 
 CREATE TABLE avaliacao (
@@ -74,5 +74,8 @@ CREATE TABLE avaliacao (
 );
 
 
--- ALTER TABLE
+-- ALTER TABLE documentado:
+-- Adiciona o telefone de contato da imobiliaria, que nao foi previsto na
+-- modelagem inicial. A coluna e opcional (aceita NULL), entao as imobiliarias
+-- ja cadastradas continuam validas sem precisar de valor.
 ALTER TABLE imobiliaria ADD COLUMN telefone TEXT;

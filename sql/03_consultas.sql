@@ -1,12 +1,6 @@
--- =====================================================================
--- 03_consultas.sql : trecho do Nicolas (Q1 a Q7)
--- Filtros (Q1 a Q3) e agregacoes (Q4 a Q7).
--- Pressupoe 01_ddl.sql e 02_dml.sql ja executados em um banco vazio.
--- =====================================================================
+-- consultas Q1 a Q7 (filtros e agregações)
 
--- ---------------------------------------------------------------------
 -- FILTROS (WHERE, LIKE, IN, BETWEEN) E ORDENACAO
--- ---------------------------------------------------------------------
 
 -- Q1
 -- Pergunta de negocio: quais farmacias e mercados o app mostra, em ordem
@@ -37,9 +31,8 @@ WHERE finalidade = 'aluguel'
   AND preco BETWEEN 1500 AND 3000
 ORDER BY preco ASC;
 
--- ---------------------------------------------------------------------
+
 -- AGREGACAO, GROUP BY E HAVING
--- ---------------------------------------------------------------------
 
 -- Q4
 -- Pergunta de negocio: qual a nota media de cada bairro avaliado?
