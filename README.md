@@ -73,7 +73,7 @@ sqlite3 banco/seu_vizin.db < sql/03_consultas.sql
 
 ## Status
 
-- [ ] Regras de negócio e MER
+- [x] Regras de negócio e MER
 - [ ] Modelo relacional, normalização e dicionário de dados
 - [ ] `01_ddl.sql`
 - [ ] `02_dml.sql`
