@@ -1,49 +1,73 @@
+// Seu Vizin - modelo relacional (SQLite)
+// Mantido em sincronia com sql/01_ddl.sql
+
 Table cidade {
   id_cidade integer [pk, increment]
-  nome varchar(100) [not null]
-  estado varchar(50) [not null]
+  nome text [not null]
+  estado text [not null]
 }
 
 Table bairro {
   id_bairro integer [pk, increment]
   id_cidade integer [not null]
-  nome varchar(100) [not null]
+  nome text [not null]
   // nota_media: atributo derivado (média das notas em avaliacao), não armazenado
 }
 
 Table imobiliaria {
   id_imobiliaria integer [pk, increment]
   id_matriz integer [null, note: 'Preenchido apenas nas filiais; a matriz fica NULL']
-  nome varchar(150) [not null]
-  cnpj varchar(14) [not null, unique]
+  nome text [not null]
+  cnpj text [not null, unique, note: 'Somente números, 14 caracteres']
+  telefone text [null, note: 'Adicionado por ALTER TABLE; opcional']
+
+  checks {
+    `length(cnpj) = 14` [name: 'ck_imobiliaria_cnpj']
+  }
 }
 
 Table imovel {
   id_imovel integer [pk, increment]
   id_bairro integer [not null]
   id_imobiliaria integer [null, note: 'Anúncio pode não ter imobiliária']
-  tipo varchar(50) [not null]
-  finalidade varchar(50) [not null]
-  area_m2 decimal(10,2) [not null]
-  preco decimal(14,2) [not null]
-  status varchar(50) [not null]
+  tipo text [not null, note: 'apartamento, casa, kitnet ou terreno']
+  finalidade text [not null, note: 'aluguel ou venda']
+  area_m2 real [not null]
+  preco real [not null]
+  status text [not null, default: 'pendente', note: 'pendente, ativo, alugado ou vendido']
   // preco_por_m2: atributo derivado (preco / area_m2), não armazenado
+
+  checks {
+    `tipo in ('apartamento', 'casa', 'kitnet', 'terreno')` [name: 'ck_imovel_tipo']
+    `finalidade in ('aluguel', 'venda')` [name: 'ck_imovel_finalidade']
+    `area_m2 > 0` [name: 'ck_imovel_area']
+    `preco > 0` [name: 'ck_imovel_preco']
+    `status in ('pendente', 'ativo', 'alugado', 'vendido')` [name: 'ck_imovel_status']
+  }
 }
 
 Table estabelecimento {
   id_estabelecimento integer [pk, increment]
   id_bairro integer [not null]
-  nome varchar(150) [not null]
-  categoria varchar(100) [not null]
+  nome text [not null]
+  categoria text [not null, note: 'mercado, farmacia, escola ou transporte']
+
+  checks {
+    `categoria in ('mercado', 'farmacia', 'escola', 'transporte')` [name: 'ck_estabelecimento_categoria']
+  }
 }
 
 Table usuario {
   id_usuario integer [pk, increment]
-  nome varchar(150) [not null]
-  email varchar(150) [not null, unique]
+  nome text [not null]
+  email text [not null, unique]
   data_nascimento date [not null]
-  tipo varchar(50) [not null]
+  tipo text [not null, note: 'morador, interessado, proprietario ou corretor']
   // idade: atributo derivado (a partir de data_nascimento), não armazenado
+
+  checks {
+    `tipo in ('morador', 'interessado', 'proprietario', 'corretor')` [name: 'ck_usuario_tipo']
+  }
 }
 
 // Relacionamento N:N entre USUARIO e BAIRRO, com atributos próprios
@@ -52,10 +76,21 @@ Table avaliacao {
   id_usuario integer [not null]
   id_bairro integer [not null]
   data date [not null]
-  nota smallint [not null]
-  topico varchar(100) [not null]
-  situacao_moradia varchar(100) [not null]
-  motivo text [null, note: 'Opcional (O)']
+  nota real [not null, note: 'De 0,5 a 5,0']
+  topico text [not null, note: 'seguranca, infraestrutura, custo_de_vida, qualidade_de_vida ou comercio']
+  situacao_moradia text [not null, note: 'atual ou antigo']
+  motivo text [null, note: 'Obrigatório quando nota < 2,5 (regra 7)']
+
+  indexes {
+    (id_usuario, id_bairro, topico) [unique, name: 'uq_avaliacao_usuario_bairro_topico']
+  }
+
+  checks {
+    `nota between 0.5 and 5.0` [name: 'ck_avaliacao_nota']
+    `topico in ('seguranca', 'infraestrutura', 'custo_de_vida', 'qualidade_de_vida', 'comercio')` [name: 'ck_avaliacao_topico']
+    `situacao_moradia in ('atual', 'antigo')` [name: 'ck_avaliacao_situacao']
+    `nota >= 2.5 or (motivo is not null and motivo <> '')` [name: 'ck_avaliacao_motivo']
+  }
 }
 
 // CIDADE (1) tem BAIRRO (N)
